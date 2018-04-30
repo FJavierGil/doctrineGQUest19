@@ -20,11 +20,17 @@ a `./.env`. A continuación se debe editar dicho fichero para asignar los parám
 
 * Configuración del servidor de bses de datos
 * Nombre de la base de datos
-* Configuración del acceso a la base de datos
+* Configuración del acceso a la base de datos (usuario y contraseña)
 
-Una vez editado el anterior fichero desde el directorio raíz del proyecto se debe ejecutar el comando:
+Una vez editado el anterior fichero desde el directorio raíz del proyecto se deben ejecutar los comandos:
 ```
 $ composer install
+$ bin\doctrine orm:schema:update --dump-sql --force
+```
+
+Para comprobar la validez de la información de mapeo y la sincronización con la base de datos:
+```
+$ bin\doctrine orm:schema:validate
 ```
 
 ##Estructura del proyecto:
@@ -41,7 +47,7 @@ A continuación se describe el contenido y estructura del proyecto:
     - Subdirectorio `src/scripts`: algunos scripts de ejemplo
 * Directorio `vendor`:
     - Componentes desarrollados por terceros (Doctrine, Dotenv, PHPUnit, etc.)
-* Directorio `test`:
+* Directorio `tests`:
     - Conjunto de scripts para la ejecución de test con PHPUnit.
 
 ## Ejecución de pruebas

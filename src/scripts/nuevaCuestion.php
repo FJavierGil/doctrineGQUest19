@@ -9,7 +9,7 @@
  */
 
 use TDW\GCuest\Entity\Cuestion;
-use TDW\GCuest\Entity\Maestro;
+use TDW\GCuest\Entity\Usuario;
 
 require 'inicio.php';
 
@@ -24,16 +24,16 @@ ______MOSTRAR_USO;
 
 try {
     $entityManager = getEntityManager();
-    $maestro = $entityManager
-        ->getRepository(Maestro::class)
+    $usuario = $entityManager
+        ->getRepository(Usuario::class)
         ->findOneBy([ 'username' => ($argv[2] ?? null) ]);
-    if (isset($argv[2]) && null === $maestro) {
-        throw new \Doctrine\ORM\EntityNotFoundException('Maestro no encontrado');
+    if (isset($argv[2]) && null === $usuario) {
+        throw new \Doctrine\Common\CommonException('Maestro no encontrado');
     }
-    $cuestion = new Cuestion($argv[1], $maestro, $argv[3] ?? false);
+    $cuestion = new Cuestion($argv[1], $usuario, $argv[3] ?? false);
     $entityManager->persist($cuestion);
     $entityManager->flush();
     echo 'Creada cuestión Id: ' . $cuestion->getIdCuestion() . PHP_EOL;
-} catch (\Doctrine\ORM\ORMException $e) {
+} catch (\Exception $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }

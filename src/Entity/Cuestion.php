@@ -22,13 +22,16 @@ use Doctrine\ORM\Mapping as ORM;
  *     name="cuestiones",
  *     indexes={
  *          @ORM\Index(
- *              name="fk_maestro_idx", columns={ "creador" }
+ *              name="fk_creador_idx", columns={ "creador" }
  *          )
  *      }
  * )
  */
-class Cuestion
+class Cuestion implements \JsonSerializable
 {
+
+    const CUESTION_ABIERTA = 'abierta';
+    const CUESTION_CERRADA = 'cerrada';
 
     /**
      * @var int $idCuestion
@@ -43,50 +46,68 @@ class Cuestion
     protected $idCuestion;
 
     /**
-     * @var string $descripcion
+     * @var string $enunciadoDescripcion
      *
      * @ORM\Column(
-     *     name="descripcion",
+     *     name="enum_descripcion",
      *     type="string",
      *     length=255,
      *     nullable=true
      * )
      */
-    protected $descripcion;
+    protected $enunciadoDescripcion;
 
     /**
      * @var bool $disponible
      *
      * @ORM\Column(
-     *     name="disponible",
+     *     name="enum_disponible",
      *     type="integer",
      *     options={ "default" = 0 }
      * )
      */
-    protected $disponible;
+    protected $enunciadoDisponible;
 
     /**
-     * @var Maestro $creador
+     * @var Usuario $creador
      *
-     * @ORM\ManyToOne(targetEntity="Maestro", inversedBy="cuestiones")
+     * @ORM\ManyToOne(targetEntity="Usuario", inversedBy="cuestiones")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="creador", referencedColumnName="username")
      * })
      */
-    protected $creador;
+    protected $creador = null;
+
+    /**
+     * @var string $estado
+     *
+     * @ORM\Column(
+     *     name="estado",
+     *     type="string",
+     *     length=7,
+     *     options={ "default" = Cuestion::CUESTION_CERRADA }
+     * )
+     */
+    protected $estado = Cuestion::CUESTION_CERRADA;
 
     /**
      * Cuestion constructor.
      *
-     * @param string|null $descripcion
-     * @param Maestro|null $creador
-     * @param bool $disponible
+     * @param string|null $enunciadoDescripcion
+     * @param Usuario|null $creador
+     * @param bool $enunciadoDisponible
+     * @throws \Doctrine\Common\CommonException
      */
-    public function __construct(?string $descripcion = '', ?Maestro $creador = null, bool $disponible = false)
-    {
-        $this->descripcion = $descripcion;
-        $this->creador = $creador;
-        $this->disponible = $disponible;
+    public function __construct(
+        ?string $enunciadoDescripcion = '',
+        ?Usuario $creador = null,
+        bool $enunciadoDisponible = false
+    ) {
+        $this->enunciadoDescripcion = $enunciadoDescripcion;
+        (null != $creador)
+            ? $this->setCreador($creador)
+            : null;
+        $this->enunciadoDisponible = $enunciadoDisponible;
     }
 
     /**
@@ -100,54 +121,84 @@ class Cuestion
     /**
      * @return string
      */
-    public function getDescripcion(): string
+    public function getEnunciadoDescripcion(): string
     {
-        return $this->descripcion;
+        return $this->enunciadoDescripcion;
     }
 
     /**
-     * @param string $descripcion
+     * @param string $enunciadoDescripcion
      * @return Cuestion
      */
-    public function setDescripcion(string $descripcion): Cuestion
+    public function setEnunciadoDescripcion(string $enunciadoDescripcion): Cuestion
     {
-        $this->descripcion = $descripcion;
+        $this->enunciadoDescripcion = $enunciadoDescripcion;
         return $this;
     }
 
     /**
      * @return bool
      */
-    public function isDisponible(): bool
+    public function isEnunciadoDisponible(): bool
     {
-        return $this->disponible;
+        return $this->enunciadoDisponible;
     }
 
     /**
      * @param bool $disponible
      * @return Cuestion
      */
-    public function setDisponible(bool $disponible): Cuestion
+    public function setEnunciadoDisponible(bool $disponible): Cuestion
     {
-        $this->disponible = $disponible;
+        $this->enunciadoDisponible = $disponible;
         return $this;
     }
 
     /**
-     * @return Maestro|null
+     * @return Usuario|null
      */
-    public function getCreador(): ?Maestro
+    public function getCreador(): ?Usuario
     {
         return $this->creador;
     }
 
     /**
-     * @param Maestro $creador
+     * @param Usuario $creador
+     * @return Cuestion
+     * @throws \Doctrine\Common\CommonException
+     */
+    public function setCreador(Usuario $creador): Cuestion
+    {
+        if (!$creador->esMaestro()) {
+            throw new \Doctrine\Common\CommonException('Creador debe ser maestro');
+        }
+        $this->creador = $creador;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEstado(): string
+    {
+        return $this->estado;
+    }
+
+    /**
      * @return Cuestion
      */
-    public function setCreador(Maestro $creador): Cuestion
+    public function abrirCuestion(): Cuestion
     {
-        $this->creador = $creador;
+        $this->estado = Cuestion::CUESTION_ABIERTA;
+        return $this;
+    }
+
+    /**
+     * @return Cuestion
+     */
+    public function cerrarCuestion(): Cuestion
+    {
+        $this->estado = Cuestion::CUESTION_CERRADA;
         return $this;
     }
 
@@ -161,9 +212,30 @@ class Cuestion
     {
         return '[ cuestion ' .
             '(id=' . $this->getIdCuestion() . ', ' .
-            'descripción="' . $this->getDescripcion() . '", ' .
-            'disponible=' . ($this->isDisponible() ? '1' : '0') . ', ' .
-            'maestro=' . ($this->getCreador() ?? '[ - ]') .
+            'enum_descripción="' . $this->getEnunciadoDescripcion() . '", ' .
+            'enum_disponible=' . ($this->isEnunciadoDisponible() ? '1' : '0') . ', ' .
+            'creador=' . ($this->getCreador() ?? '[ - ]') . ', ' .
+            'estado="' . $this->getEstado() . '"' .
             ') ]';
+    }
+
+    /**
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by <b>json_encode</b>,
+     * which is a value of any type other than a resource.
+     * @since 5.4.0
+     */
+    public function jsonSerialize()
+    {
+        return [
+            'cuestion' => [
+                'idCuestion' => $this->getIdCuestion(),
+                'enum_descripcion' => $this->getEnunciadoDescripcion(),
+                'enum_disponible' => $this->isEnunciadoDisponible(),
+                'creador' => $this->getCreador(),
+                'estado' => $this->getEstado(),
+            ]
+        ];
     }
 }
