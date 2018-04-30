@@ -1,0 +1,30 @@
+{
+    "name": "tdw/doctrine_cuestionarios",
+    "type": "project",
+    "description": "UPM - TDW - Doctrine Gestión Cuestionarios",
+    "license": "MIT",
+    "homepage": "http://miw.etsisi.upm.es/",
+    "autoload": {
+        "psr-4": {
+            "TDW\\GCuest\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TDW\\GCuest\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "ext-pdo": "*",
+        "doctrine/orm": "^2.6",
+        "vlucas/phpdotenv": "^2.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.1",
+        "roave/security-advisories": "dev-master"
+    },
+    "config": {
+        "bin-dir": "bin"
+    }
+}
