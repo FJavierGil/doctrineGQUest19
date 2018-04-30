@@ -26,8 +26,8 @@ try {
     $entityManager = getEntityManager();
     $maestro = $entityManager
         ->getRepository(Maestro::class)
-        ->findOneBy([ 'username' => $argv[2] ]);
-    if (null === $maestro) {
+        ->findOneBy([ 'username' => ($argv[2] ?? null) ]);
+    if (isset($argv[2]) && null === $maestro) {
         throw new \Doctrine\ORM\EntityNotFoundException('Maestro no encontrado');
     }
     $cuestion = new Cuestion($argv[1], $maestro, $argv[3] ?? false);

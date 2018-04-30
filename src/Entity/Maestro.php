@@ -10,6 +10,8 @@
 
 namespace TDW\GCuest\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -24,38 +26,27 @@ class Maestro extends Usuario
 {
 
     /**
-     * @var integer $attr1
+     * @var Cuestion[] $cuestiones
      *
-     * @ORM\Column(
-     *     name="attr1",
-     *     type="integer",
-     *     nullable=true
+     * @ORM\OneToMany(
+     *     targetEntity="Cuestion",
+     *     mappedBy="creador"
      * )
      */
-    protected $attr1;
+    protected $cuestiones;
 
-    public function __construct(string $username = '', string $email = '', int $attr1 = 0)
+    public function __construct(string $username = '', string $email = '')
     {
         parent::__construct($username, $email);
-        $this->attr1 = $attr1;
+        $this->cuestiones = new ArrayCollection();
     }
 
     /**
-     * @return int
+     * @return Collection
      */
-    public function getAttr1(): int
+    public function getCuestiones(): Collection
     {
-        return $this->attr1;
-    }
-
-    /**
-     * @param int $attr1
-     * @return Maestro
-     */
-    public function setAttr1(int $attr1): Maestro
-    {
-        $this->attr1 = $attr1;
-        return $this;
+        return $this->cuestiones;
     }
 
     /**
@@ -66,9 +57,12 @@ class Maestro extends Usuario
      */
     public function __toString(): string
     {
+        $id_cuestiones = $this->getCuestiones()->getKeys();
+        $txt_cuestiones = '[' . implode(', ', $id_cuestiones) . ']';
         return '[ maestro ' .
-            '(username=' . $this->getUsername() . ', ' .
-            'email=' . $this->getEmail() .
+            '(username="' . $this->getUsername() . '"", ' .
+            'email="' . $this->getEmail() . '"", ' .
+            'cuestiones=' . $txt_cuestiones .
             ') ]';
     }
 }

@@ -68,7 +68,7 @@ class Cuestion
     /**
      * @var Maestro $creador
      *
-     * @ORM\ManyToOne(targetEntity="Maestro")
+     * @ORM\ManyToOne(targetEntity="Maestro", inversedBy="cuestiones")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="creador", referencedColumnName="username")
      * })
@@ -134,9 +134,9 @@ class Cuestion
     }
 
     /**
-     * @return Maestro
+     * @return Maestro|null
      */
-    public function getCreador(): Maestro
+    public function getCreador(): ?Maestro
     {
         return $this->creador;
     }
@@ -163,7 +163,7 @@ class Cuestion
             '(id=' . $this->getIdCuestion() . ', ' .
             'descripción="' . $this->getDescripcion() . '", ' .
             'disponible=' . ($this->isDisponible() ? '1' : '0') . ', ' .
-            'maestro=' . $this->getCreador() .
+            'maestro=' . ($this->getCreador() ?? '[ - ]') .
             ') ]';
     }
 }
