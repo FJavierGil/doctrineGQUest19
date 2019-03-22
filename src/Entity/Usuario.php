@@ -1,89 +1,183 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - Usuario.php
- *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
+ * src\Entity\Usuario.php
  */
 
 namespace TDW\GCuest\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Usuario
- *
- * @package TDW\GCuest\Entity
+ * User
  *
  * @ORM\Entity()
- * @ORM\Table(name="usuarios")
+ * @ORM\Table(
+ *     name                 = "usuarios",
+ *     uniqueConstraints    = {
+ *          @ORM\UniqueConstraint(
+ *              name="IDX_UNIQ_USER", columns={ "username" }
+ *          ),
+ *          @ORM\UniqueConstraint(
+ *              name="IDX_UNIQ_EMAIL", columns={ "email" }
+ *          )
+ *      }
+ *     )
  */
 class Usuario implements \JsonSerializable
 {
     /**
-     * @var string $username
+     * Id
      *
-     * @ORM\Id()
+     * @var integer
+     *
      * @ORM\Column(
-     *     name="username",
-     *     type="string",
-     *     length=32
-     * )
+     *     name     = "id",
+     *     type     = "integer",
+     *     nullable = false
+     *     )
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @SuppressWarnings(PHPMD.ShortVariable)
      */
-    protected $username;
+    private $id;
 
     /**
-     * @var string $email
+     * Username
+     *
+     * @var string
      *
      * @ORM\Column(
-     *     name="email",
-     *     type="string",
-     *     length=64,
-     *     nullable=true
-     * )
+     *     name     = "username",
+     *     type     = "string",
+     *     length   = 32,
+     *     nullable = false,
+     *     unique   = true
+     *     )
      */
-    protected $email;
+    private $username;
+
+    /**
+     * Email
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *     name     = "email",
+     *     type     = "string",
+     *     length   = 60,
+     *     nullable = false,
+     *     unique   = true
+     *     )
+     */
+    private $email;
+
+    /**
+     * Enabled
+     *
+     * @var boolean
+     *
+     * @ORM\Column(
+     *     name     = "enabled",
+     *     type     = "boolean",
+     *     nullable = false
+     *     )
+     */
+    private $enabled;
 
     /**
      * @var bool
      *
      * @ORM\Column(
-     *     name="esMaestro",
-     *     type="integer",
-     *     options={ "default" = 0}
+     *     name="master",
+     *     type="boolean",
+     *     options={ "default" = false }
      * )
      */
-    protected $esMaestro = false;
+    protected $isMaestro = false;
 
     /**
-     * @var Cuestion[] $cuestiones
+     * IsAdmin
+     *
+     * @var boolean
+     *
+     * @ORM\Column(
+     *     name     = "admin",
+     *     type     = "boolean",
+     *     nullable = true,
+     *     options  = { "default" = false }
+     *     )
+     */
+    private $isAdmin;
+
+    /**
+     * @var ArrayCollection $cuestiones
      *
      * @ORM\OneToMany(
      *     targetEntity="Cuestion",
-     *     mappedBy="creador"
+     *     mappedBy="creador",
+     *     cascade={ "merge", "remove" }
      * )
      */
     protected $cuestiones;
 
     /**
-     * Usuario constructor.
-     * @param string $username
-     * @param string $email
-     * @param bool $esMaestro
+     * Password
+     *
+     * @var string
+     *
+     * @ORM\Column(
+     *     name     = "password",
+     *     type     = "string",
+     *     length   = 60,
+     *     nullable = false
+     *     )
      */
-    public function __construct(string $username = '', string $email = '', bool $esMaestro = false)
-    {
+    private $password;
+
+    /**
+     * User constructor.
+     *
+     * @param string $username username
+     * @param string $email email
+     * @param string $password password
+     * @param bool $enabled enabled
+     * @param bool $isMaestro isMaestro
+     * @param bool $isAdmin isAdmin
+     */
+    public function __construct(
+        string $username = '',
+        string $email = '',
+        string $password = '',
+        bool   $enabled = true,
+        bool   $isMaestro = false,
+        bool   $isAdmin = false
+    ) {
+        $this->id       = 0;
         $this->username = $username;
-        $this->email = $email;
-        $this->esMaestro = $esMaestro;
+        $this->email    = $email;
+        $this->setPassword($password);
+        $this->enabled  = $enabled;
+        $this->isMaestro = $isMaestro;
+        $this->isAdmin  = $isAdmin;
         $this->cuestiones = new ArrayCollection();
     }
 
     /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get username
+     *
      * @return string
      */
     public function getUsername(): string
@@ -92,7 +186,10 @@ class Usuario implements \JsonSerializable
     }
 
     /**
-     * @param string $username
+     * Set username
+     *
+     * @param string $username username
+     *
      * @return Usuario
      */
     public function setUsername(string $username): Usuario
@@ -102,6 +199,8 @@ class Usuario implements \JsonSerializable
     }
 
     /**
+     * Get email
+     *
      * @return string
      */
     public function getEmail(): string
@@ -110,7 +209,10 @@ class Usuario implements \JsonSerializable
     }
 
     /**
-     * @param string $email
+     * Set email
+     *
+     * @param string $email email
+     *
      * @return Usuario
      */
     public function setEmail(string $email): Usuario
@@ -120,11 +222,57 @@ class Usuario implements \JsonSerializable
     }
 
     /**
+     * Get isEnabled
+     *
+     * @return boolean
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Set enabled
+     *
+     * @param boolean $enabled enabled
+     *
+     * @return Usuario
+     */
+    public function setEnabled(bool $enabled): Usuario
+    {
+        $this->enabled = $enabled;
+        return $this;
+    }
+
+    /**
+     * Get isAdmin
+     *
+     * @return boolean
+     */
+    public function isAdmin(): bool
+    {
+        return $this->isAdmin;
+    }
+
+    /**
+     * Set isAdmin
+     *
+     * @param boolean $isAdmin isAdmin
+     *
+     * @return Usuario
+     */
+    public function setAdmin(bool $isAdmin): Usuario
+    {
+        $this->isAdmin = $isAdmin;
+        return $this;
+    }
+
+    /**
      * @return bool
      */
-    public function esMaestro(): bool
+    public function isMaestro(): bool
     {
-        return $this->esMaestro;
+        return $this->isMaestro;
     }
 
     /**
@@ -133,8 +281,43 @@ class Usuario implements \JsonSerializable
      */
     public function setMaestro(bool $esMaestro): Usuario
     {
-        $this->esMaestro = $esMaestro;
+        $this->isMaestro = $esMaestro;
         return $this;
+    }
+
+    /**
+     * Get password hash
+     *
+     * @return string
+     */
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
+
+    /**
+     * Set password
+     *
+     * @param string $password password
+     *
+     * @return Usuario
+     */
+    public function setPassword(string $password): Usuario
+    {
+        $this->password = (string) password_hash($password, PASSWORD_DEFAULT);
+        return $this;
+    }
+
+    /**
+     * Verifies that the given hash matches the user password.
+     *
+     * @param string $password password
+     *
+     * @return boolean
+     */
+    public function validatePassword($password): bool
+    {
+        return password_verify($password, $this->password);
     }
 
     /**
@@ -153,16 +336,25 @@ class Usuario implements \JsonSerializable
      */
     public function __toString(): string
     {
-        $id_cuestiones = $this->getCuestiones()->map(
-            function (Cuestion $cuestion) {
-                return $cuestion->getIdCuestion();
-            }
-        );
-        $txt_cuestiones = '[' . implode(', ', $id_cuestiones->getValues()) . ']';
+        /** @var ArrayCollection $id_cuestiones */
+        $id_cuestiones = $this->getCuestiones()->isEmpty()
+            ? new ArrayCollection()
+            : $this->getCuestiones()->map(
+                function (Cuestion $cuestion) {
+                    return $cuestion->getIdCuestion();
+                }
+            );
+
+        $txt_cuestiones = $id_cuestiones->isEmpty()
+            ? '[ ]'
+            : '[' . implode(', ', $id_cuestiones->getValues()) . ']';
         return '[ usuario ' .
-            '(username="' . $this->getUsername() . '", ' .
+            '(id=' . $this->getId() . ', ' .
+            'username="' . $this->getUsername() . '", ' .
             'email="' . $this->getEmail() . '", ' .
-            'esMaestro="' . ($this->esMaestro() ? '1' : '0') . '", ' .
+            'enabled="' . ($this->isEnabled() ? '1' : '0') . '", ' .
+            'isMaestro="' . ($this->isMaestro() ? '1' : '0') . '", ' .
+            'isAdmin="' . ($this->isAdmin() ? '1' : '0') . '", ' .
             'cuestiones=' . $txt_cuestiones .
             ') ]';
     }
@@ -176,16 +368,22 @@ class Usuario implements \JsonSerializable
      */
     public function jsonSerialize()
     {
-        $id_cuestiones = $this->getCuestiones()->map(
-            function (Cuestion $cuestion) {
-                return $cuestion->getIdCuestion();
-            }
-        );
+        $id_cuestiones = $this->getCuestiones()->isEmpty()
+            ? new ArrayCollection()
+            : $this->getCuestiones()->map(
+                function (Cuestion $cuestion) {
+                    return $cuestion->getIdCuestion();
+                }
+            );
+
         return [
             'usuario' => [
+                'id' => $this->getId(),
                 'username' => $this->getUsername(),
                 'email' => $this->getEmail(),
-                'esMaestro' => $this->esMaestro(),
+                'enabled' => $this->isEnabled(),
+                'maestro' => $this->isMaestro(),
+                'admin' => $this->isAdmin(),
                 'cuestiones' => $id_cuestiones->getValues()
             ]
         ];

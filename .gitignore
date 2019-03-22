@@ -1,6 +1,6 @@
 /.idea/
 /vendor/
 /bin/
-/.env
-/.env.test
 /composer.lock
+/.env.local
+/phpunit.xml

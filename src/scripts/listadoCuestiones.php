@@ -1,7 +1,7 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - listadoCuestiones.php
+ * src\scripts\listadoCuestiones.php
  *
  * @author   Javier Gil <franciscojavier.gil@upm.es>
  * @license  https://opensource.org/licenses/MIT MIT License
@@ -13,16 +13,16 @@ use TDW\GCuest\Entity\Cuestion;
 require 'inicio.php';
 
 try {
-    $entityManager = getEntityManager();
+    $entityManager = \TDW\GCuest\Utils::getEntityManager();
     $cuestiones = $entityManager->getRepository(Cuestion::class)->findAll();
     $entityManager->close();
-} catch (\Doctrine\ORM\ORMException $e) {
+} catch (\Exception $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }
 
 // Salida formato JSON
-if (in_array('--json', $argv)) {
-    echo json_encode($cuestiones, JSON_PRETTY_PRINT);
+if (in_array('--json', $argv, false)) {
+    echo json_encode([ 'cuestiones' => $cuestiones], JSON_PRETTY_PRINT);
     exit();
 }
 

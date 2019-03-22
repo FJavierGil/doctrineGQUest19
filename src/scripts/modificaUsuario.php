@@ -1,11 +1,7 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - modificaUsuario.php
- *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
+ * src\scripts\modificaUsuario.php
  */
 
 use TDW\GCuest\Entity\Usuario;
@@ -23,11 +19,11 @@ ______MOSTRAR_USO;
 
 try {
     $nombre = $argv[1];
-    $entityManager = getEntityManager();
+    $entityManager = \TDW\GCuest\Utils::getEntityManager();
     /** @var Usuario $usuario */
     $usuario = $entityManager
         ->find(Usuario::class, $nombre);
-    if (null == $usuario) {
+    if (null === $usuario) {
         die('Usuario [' . $nombre . '] no existe.' .PHP_EOL);
     }
 
@@ -42,10 +38,10 @@ try {
                 $usuario->setEmail($valor);
                 break;
             case 'esMaestro':
-                $usuario->setMaestro($valor);
+                $usuario->setMaestro((bool) $valor);
                 break;
             default:
-                echo sprintf("Argumento %s desconocido", $clave);
+                echo sprintf('Argumento %s desconocido', $clave);
         }
     }
 

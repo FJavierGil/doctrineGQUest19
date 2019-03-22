@@ -2,8 +2,7 @@ TDW: Doctrine Gestión Cuestionarios
 ======================================
 
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%5E7.1-blue.svg)](http://php.net/)
-[![Dependency Status](https://www.versioneye.com/user/projects/5acf715a0fb24f3a025bfeac/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/5acf715a0fb24f3a025bfeac)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%5E7.2-blue.svg)](http://php.net/)
 
 > Ejemplo ORM Doctrine
 
@@ -15,10 +14,10 @@ persistencia de los datos en un SGBD.
 
 ## Instalación de la aplicación
 
-Para realizar la instalación de la aplicación se debe crear una copia del fichero `./.env.dist` y renombrarla
-a `./.env`. A continuación se debe editar dicho fichero para asignar los parámetros:
+Para realizar la instalación de la aplicación se debe crear una copia del fichero `./.env` y renombrarla
+a `./.env.local`. A continuación se debe editar dicho fichero para asignar los parámetros:
 
-* Configuración del servidor de bses de datos
+* Configuración del servidor de bases de datos
 * Nombre de la base de datos
 * Configuración del acceso a la base de datos (usuario y contraseña)
 
@@ -38,7 +37,7 @@ $ bin\doctrine orm:schema:validate
 A continuación se describe el contenido y estructura del proyecto:
 
 * Directorio raíz del proyecto `.`:
-    - `bootstrap.php` y  `cli-config.php`: infraestructura del ORM Doctrine
+    - `cli-config.php`: infraestructura de la interfaz de comandos del ORM Doctrine
     - `phpunit.xml` configuración de la suite de pruebas
 * Directorio `bin`:
     - Ejecutables (*doctrine* y *phpunit*)
@@ -46,7 +45,7 @@ A continuación se describe el contenido y estructura del proyecto:
     - Subdirectorio `src/Entity`: entidades PHP (incluyen anotaciones de mapeo del ORM)
     - Subdirectorio `src/scripts`: algunos scripts de ejemplo
 * Directorio `vendor`:
-    - Componentes desarrollados por terceros (Doctrine, Dotenv, PHPUnit, etc.)
+    - Componentes desarrollados por terceros (Doctrine, Dotenv, etc.)
 * Directorio `tests`:
     - Conjunto de scripts para la ejecución de test con PHPUnit.
 
@@ -54,12 +53,14 @@ A continuación se describe el contenido y estructura del proyecto:
 
 La aplicación incorpora un conjunto de herramientas para la ejecución de pruebas 
 unitarias con [PHPUnit][phpunit]. Empleando este conjunto de herramientas es posible
-comprobar de manera automática el correcto funcionamiento de la aplicación completa
-sin la necesidad de complejas herramientas software adicionales.
+comprobar de manera automática el correcto funcionamiento de los métodos de las entidades
+sin la necesidad de herramientas adicionales.
 
-Para lanzar la suite de pruebas se debe ejecutar:
+Para configurar el entorno de pruebas se debe crear una copia del fichero `./phpunit.xml.dist`
+y renombrarla como `./phpunit.xml`. A continuación se debe editar dicho fichero y modificar los
+mismos parámetros que en la fase de instalación con los valores apropiados. Para lanzar la suite de pruebas se debe ejecutar:
 ```
-$ bin/phpunit
+$ ./bin/phpunit [--testdox] [--coverage-text] [-v]
 ```
 
 [dataMapper]: http://martinfowler.com/eaaCatalog/dataMapper.html

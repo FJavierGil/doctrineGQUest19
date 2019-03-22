@@ -1,11 +1,7 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - nuevoMaestro.php
- *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
+ * src\scripts\nuevaCuestion.php
  */
 
 use TDW\GCuest\Entity\Cuestion;
@@ -23,14 +19,19 @@ ______MOSTRAR_USO;
 }
 
 try {
-    $entityManager = getEntityManager();
-    $usuario = $entityManager
-        ->getRepository(Usuario::class)
-        ->findOneBy([ 'username' => ($argv[2] ?? null) ]);
-    if (isset($argv[2]) && null === $usuario) {
-        throw new \Doctrine\Common\CommonException('Maestro no encontrado');
+    $maestro = null;
+    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    if (isset($argv[2])) {
+        /** @var Usuario $maestro */
+        $maestro = $entityManager
+            ->getRepository(Usuario::class)
+            ->findOneBy([ 'username' => $argv[2] ?? null ]);
+        if (null === $maestro) {
+            fwrite(STDERR, 'Maestro no encontrado' . PHP_EOL);
+            exit(1);
+        }
     }
-    $cuestion = new Cuestion($argv[1], $usuario, $argv[3] ?? false);
+    $cuestion = new Cuestion($argv[1], $maestro, $argv[3] ?? false);
     $entityManager->persist($cuestion);
     $entityManager->flush();
     echo 'Creada cuestión Id: ' . $cuestion->getIdCuestion() . PHP_EOL;

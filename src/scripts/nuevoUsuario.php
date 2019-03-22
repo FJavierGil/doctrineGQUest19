@@ -1,11 +1,7 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - nuevoUsuario.php
- *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
+ * src\scripts\nuevoUsuario.php
  */
 
 use TDW\GCuest\Entity\Usuario;
@@ -13,11 +9,12 @@ use TDW\GCuest\Entity\Usuario;
 require 'inicio.php';
 
 try {
-    $nombre = 'user-' . mt_rand(0, 100000);
-    $entityManager = getEntityManager();
-    $usuario = new Usuario($nombre, $nombre . '@example.com', mt_rand(0, 1));
+    $nombre = 'user-' . random_int(0, 100000);
+    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    $usuario = new Usuario($nombre, $nombre . '@example.com', $nombre, (bool) random_int(0, 1));
     $entityManager->persist($usuario);
     $entityManager->flush();
-} catch (\Doctrine\ORM\ORMException $e) {
+    echo sprintf('Creado usuario Id: %d, Nombre: %s' . PHP_EOL, $usuario->getId(), $usuario->getUsername());
+} catch (\Exception $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }

@@ -1,21 +1,17 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - Cuestion.php
- *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
+ * src\Entity\Cuestion.php
  */
 
 namespace TDW\GCuest\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Class Cuestion
- *
- * @package TDW\GCuest\Entity
  *
  * @ORM\Entity()
  * @ORM\Table(
@@ -29,9 +25,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Cuestion implements \JsonSerializable
 {
-
-    const CUESTION_ABIERTA = 'abierta';
-    const CUESTION_CERRADA = 'cerrada';
+    public const CUESTION_ABIERTA = 'abierta';
+    public const CUESTION_CERRADA = 'cerrada';
 
     /**
      * @var int $idCuestion
@@ -46,7 +41,7 @@ class Cuestion implements \JsonSerializable
     protected $idCuestion;
 
     /**
-     * @var string $enunciadoDescripcion
+     * @var string|null $enunciadoDescripcion
      *
      * @ORM\Column(
      *     name="enum_descripcion",
@@ -58,25 +53,25 @@ class Cuestion implements \JsonSerializable
     protected $enunciadoDescripcion;
 
     /**
-     * @var bool $disponible
+     * @var bool $enunciadoDisponible
      *
      * @ORM\Column(
      *     name="enum_disponible",
-     *     type="integer",
-     *     options={ "default" = 0 }
+     *     type="boolean",
+     *     options={ "default" = false }
      * )
      */
     protected $enunciadoDisponible;
 
     /**
-     * @var Usuario $creador
+     * @var Usuario|null $creador
      *
-     * @ORM\ManyToOne(targetEntity="Usuario", inversedBy="cuestiones")
+     * @ORM\ManyToOne(targetEntity="Usuario", inversedBy="cuestiones", cascade={ "merge", "remove" })
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creador", referencedColumnName="username")
+     *   @ORM\JoinColumn(name="creador", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * })
      */
-    protected $creador = null;
+    protected $creador;
 
     /**
      * @var string $estado
@@ -91,23 +86,35 @@ class Cuestion implements \JsonSerializable
     protected $estado = Cuestion::CUESTION_CERRADA;
 
     /**
+     * @var Collection|Categoria[]
+     *
+     * @ORM\ManyToMany(targetEntity="Categoria", mappedBy="cuestiones")
+     * @ORM\OrderBy({ "idCategoria" = "ASC" })
+     */
+    protected $categorias;
+
+    /**
      * Cuestion constructor.
      *
-     * @param string|null $enunciadoDescripcion
+     * @param string|null  $enunciadoDescripcion
      * @param Usuario|null $creador
-     * @param bool $enunciadoDisponible
-     * @throws \Doctrine\Common\CommonException
+     * @param bool         $enunciadoDisponible
+     *
+     * @throws \Doctrine\ORM\ORMException
      */
     public function __construct(
-        ?string $enunciadoDescripcion = '',
+        ?string $enunciadoDescripcion = null,
         ?Usuario $creador = null,
         bool $enunciadoDisponible = false
     ) {
+        $this->idCuestion = 0;
         $this->enunciadoDescripcion = $enunciadoDescripcion;
-        (null != $creador)
+        (null !== $creador)
             ? $this->setCreador($creador)
             : null;
         $this->enunciadoDisponible = $enunciadoDisponible;
+        $this->estado = self::CUESTION_CERRADA;
+        $this->categorias = new ArrayCollection();
     }
 
     /**
@@ -123,7 +130,7 @@ class Cuestion implements \JsonSerializable
      */
     public function getEnunciadoDescripcion(): string
     {
-        return $this->enunciadoDescripcion;
+        return (string) $this->enunciadoDescripcion;
     }
 
     /**
@@ -165,12 +172,12 @@ class Cuestion implements \JsonSerializable
     /**
      * @param Usuario $creador
      * @return Cuestion
-     * @throws \Doctrine\Common\CommonException
+     * @throws \Doctrine\ORM\ORMException
      */
     public function setCreador(Usuario $creador): Cuestion
     {
-        if (!$creador->esMaestro()) {
-            throw new \Doctrine\Common\CommonException('Creador debe ser maestro');
+        if (!$creador->isMaestro()) {
+            throw new \Doctrine\ORM\ORMException('Creador debe ser maestro');
         }
         $this->creador = $creador;
         return $this;
@@ -189,7 +196,7 @@ class Cuestion implements \JsonSerializable
      */
     public function abrirCuestion(): Cuestion
     {
-        $this->estado = Cuestion::CUESTION_ABIERTA;
+        $this->estado = self::CUESTION_ABIERTA;
         return $this;
     }
 
@@ -198,7 +205,56 @@ class Cuestion implements \JsonSerializable
      */
     public function cerrarCuestion(): Cuestion
     {
-        $this->estado = Cuestion::CUESTION_CERRADA;
+        $this->estado = self::CUESTION_CERRADA;
+        return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCategorias(): Collection
+    {
+        return $this->categorias;
+    }
+
+    /**
+     * @param Categoria $categoria
+     * @return bool
+     */
+    public function containsCategoria(Categoria $categoria): bool
+    {
+        return $this->categorias->contains($categoria);
+    }
+
+    /**
+     * Añade la categoría a la cuestión
+     *
+     * @param Categoria $categoria
+     * @return Cuestion
+     */
+    public function addCategoria(Categoria $categoria): Cuestion
+    {
+        if ($this->categorias->contains($categoria)) {
+            return $this;
+        }
+
+        $this->categorias->add($categoria);
+        return $this;
+    }
+
+    /**
+     * Elimina la categoría identificado por $categoria de la cuestión
+     *
+     * @param Categoria $categoria
+     * @return Cuestion|null La cuestión o nulo, si la cuestión no contiene la categoría
+     */
+    public function removeCategoria(Categoria $categoria): ?Cuestion
+    {
+        if (!$this->categorias->contains($categoria)) {
+            return null;
+        }
+
+        $this->categorias->removeElement($categoria);
         return $this;
     }
 
@@ -210,12 +266,23 @@ class Cuestion implements \JsonSerializable
      */
     public function __toString()
     {
+        $cod_categorias = $this->getCategorias()->isEmpty()
+            ? new ArrayCollection()
+            : $this->getCategorias()->map(
+                function (Categoria $categoria) {
+                    return $categoria->getIdCategoria();
+                }
+            );
+        $txt_categorias = $cod_categorias->isEmpty()
+            ? '[ ]'
+            : '[' . implode(', ', $cod_categorias->getValues()) . ']';
         return '[ cuestion ' .
             '(id=' . $this->getIdCuestion() . ', ' .
             'enum_descripción="' . $this->getEnunciadoDescripcion() . '", ' .
             'enum_disponible=' . ($this->isEnunciadoDisponible() ? '1' : '0') . ', ' .
             'creador=' . ($this->getCreador() ?? '[ - ]') . ', ' .
-            'estado="' . $this->getEstado() . '"' .
+            'estado="' . $this->getEstado() . '" ' .
+            'categorias=' . $txt_categorias .
             ') ]';
     }
 
@@ -228,6 +295,13 @@ class Cuestion implements \JsonSerializable
      */
     public function jsonSerialize()
     {
+        $cod_categorias = $this->getCategorias()->isEmpty()
+            ? new ArrayCollection()
+            : $this->getCategorias()->map(
+                function (Categoria $plan) {
+                    return $plan->getIdCategoria();
+                }
+            );
         return [
             'cuestion' => [
                 'idCuestion' => $this->getIdCuestion(),
@@ -235,6 +309,7 @@ class Cuestion implements \JsonSerializable
                 'enum_disponible' => $this->isEnunciadoDisponible(),
                 'creador' => $this->getCreador(),
                 'estado' => $this->getEstado(),
+                'categorias' => $cod_categorias->toArray(),
             ]
         ];
     }

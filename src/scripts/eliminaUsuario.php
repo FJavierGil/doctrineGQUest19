@@ -1,18 +1,14 @@
 <?php
 /**
  * PHP version 7.2
- * doctrine_GCuest18 - eliminaUsuario.php
- *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
+ * src\scripts\eliminaUsuario.php
  */
 
 use TDW\GCuest\Entity\Usuario;
 
 require 'inicio.php';
 
-if ($argc != 2) {
+if ($argc !== 2) {
     $texto = <<< ______MOSTRAR_USO
     *> Empleo: {$argv[0]} <idUsuario>
     Elimina el usuario indicado por <idUsuario>
@@ -23,14 +19,14 @@ ______MOSTRAR_USO;
 
 try {
     $nombre = $argv[1];
-    $entityManager = getEntityManager();
+    $entityManager = \TDW\GCuest\Utils::getEntityManager();
     $usuario = $entityManager
         ->find(Usuario::class, $nombre);
-    if (null == $usuario) {
+    if (null === $usuario) {
         die('Usuario [' . $nombre . '] no existe.' .PHP_EOL);
     }
     $entityManager->remove($usuario);
     $entityManager->flush();
-} catch (\Doctrine\ORM\ORMException $e) {
+} catch (\Exception $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }
