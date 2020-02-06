@@ -1,10 +1,11 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\scripts\eliminaCuestion.php
  */
 
 use TDW\GCuest\Entity\Cuestion;
+use TDW\GCuest\Utils;
 
 require 'inicio.php';
 
@@ -19,7 +20,7 @@ ______MOSTRAR_USO;
 
 try {
     $idCuestion = filter_var($argv[1], FILTER_VALIDATE_INT);
-    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    $entityManager = Utils::getEntityManager();
     $cuestion = $entityManager
         ->find(Cuestion::class, $idCuestion);
     if (null === $cuestion) {
@@ -27,6 +28,6 @@ try {
     }
     $entityManager->remove($cuestion);
     $entityManager->flush();
-} catch (\Exception $e) {
+} catch (Throwable $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }

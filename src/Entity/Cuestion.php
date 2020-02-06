@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\Entity\Cuestion.php
  */
 
@@ -9,6 +9,8 @@ namespace TDW\GCuest\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\ORMException;
+use JsonSerializable;
 
 /**
  * Class Cuestion
@@ -23,14 +25,12 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  * )
  */
-class Cuestion implements \JsonSerializable
+class Cuestion implements JsonSerializable
 {
     public const CUESTION_ABIERTA = 'abierta';
     public const CUESTION_CERRADA = 'cerrada';
 
     /**
-     * @var int $idCuestion
-     *
      * @ORM\Id()
      * @ORM\GeneratedValue( strategy="AUTO" )
      * @ORM\Column(
@@ -38,11 +38,9 @@ class Cuestion implements \JsonSerializable
      *     type="integer"
      * )
      */
-    protected $idCuestion;
+    protected ?int $idCuestion;
 
     /**
-     * @var string|null $enunciadoDescripcion
-     *
      * @ORM\Column(
      *     name="enum_descripcion",
      *     type="string",
@@ -50,32 +48,26 @@ class Cuestion implements \JsonSerializable
      *     nullable=true
      * )
      */
-    protected $enunciadoDescripcion;
+    protected ?string $enunciadoDescripcion;
 
     /**
-     * @var bool $enunciadoDisponible
-     *
      * @ORM\Column(
      *     name="enum_disponible",
      *     type="boolean",
      *     options={ "default" = false }
      * )
      */
-    protected $enunciadoDisponible;
+    protected bool $enunciadoDisponible;
 
     /**
-     * @var Usuario|null $creador
-     *
      * @ORM\ManyToOne(targetEntity="Usuario", inversedBy="cuestiones", cascade={ "merge", "remove" })
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="creador", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      * })
      */
-    protected $creador;
+    protected ?Usuario $creador = null;
 
     /**
-     * @var string $estado
-     *
      * @ORM\Column(
      *     name="estado",
      *     type="string",
@@ -83,15 +75,13 @@ class Cuestion implements \JsonSerializable
      *     options={ "default" = Cuestion::CUESTION_CERRADA }
      * )
      */
-    protected $estado = Cuestion::CUESTION_CERRADA;
+    protected string $estado = Cuestion::CUESTION_CERRADA;
 
     /**
-     * @var Collection|Categoria[]
-     *
      * @ORM\ManyToMany(targetEntity="Categoria", mappedBy="cuestiones")
      * @ORM\OrderBy({ "idCategoria" = "ASC" })
      */
-    protected $categorias;
+    protected Collection $categorias;
 
     /**
      * Cuestion constructor.
@@ -100,7 +90,7 @@ class Cuestion implements \JsonSerializable
      * @param Usuario|null $creador
      * @param bool         $enunciadoDisponible
      *
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function __construct(
         ?string $enunciadoDescripcion = null,
@@ -172,12 +162,12 @@ class Cuestion implements \JsonSerializable
     /**
      * @param Usuario $creador
      * @return Cuestion
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function setCreador(Usuario $creador): Cuestion
     {
         if (!$creador->isMaestro()) {
-            throw new \Doctrine\ORM\ORMException('Creador debe ser maestro');
+            throw new ORMException('Creador debe ser maestro');
         }
         $this->creador = $creador;
         return $this;
@@ -305,7 +295,7 @@ class Cuestion implements \JsonSerializable
         return [
             'cuestion' => [
                 'idCuestion' => $this->getIdCuestion(),
-                'enum_descripcion' => $this->getEnunciadoDescripcion(),
+                'enum_descripcion' => utf8_encode($this->getEnunciadoDescripcion()),
                 'enum_disponible' => $this->isEnunciadoDisponible(),
                 'creador' => $this->getCreador(),
                 'estado' => $this->getEstado(),

@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\scripts\create_user_admin.php
  */
 
@@ -25,7 +25,10 @@ try {
     $em = Utils::getEntityManager();
     $em->persist($user);
     $em->flush();
-    echo sprintf('Creado usuario Id: %d' . PHP_EOL ,$user->getId());
-} catch (\Exception $e) {
+    fwrite(
+        STDOUT,
+        sprintf('Creado usuario Id: %d' . PHP_EOL, $user->getId())
+    );
+} catch (\Throwable $e) {
     die('ERROR: ' . $e->getMessage());
 }

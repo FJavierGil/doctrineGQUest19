@@ -1,10 +1,11 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\scripts\eliminaUsuario.php
  */
 
 use TDW\GCuest\Entity\Usuario;
+use TDW\GCuest\Utils;
 
 require 'inicio.php';
 
@@ -19,7 +20,7 @@ ______MOSTRAR_USO;
 
 try {
     $nombre = $argv[1];
-    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    $entityManager = Utils::getEntityManager();
     $usuario = $entityManager
         ->find(Usuario::class, $nombre);
     if (null === $usuario) {
@@ -27,6 +28,6 @@ try {
     }
     $entityManager->remove($usuario);
     $entityManager->flush();
-} catch (\Exception $e) {
+} catch (Throwable $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }

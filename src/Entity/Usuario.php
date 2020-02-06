@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\Entity\Usuario.php
  */
 
@@ -9,6 +9,7 @@ namespace TDW\GCuest\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JsonSerializable;
 
 /**
  * User
@@ -26,12 +27,10 @@ use Doctrine\ORM\Mapping as ORM;
  *      }
  *     )
  */
-class Usuario implements \JsonSerializable
+class Usuario implements JsonSerializable
 {
     /**
      * Id
-     *
-     * @var integer
      *
      * @ORM\Column(
      *     name     = "id",
@@ -42,12 +41,10 @@ class Usuario implements \JsonSerializable
      * @ORM\GeneratedValue(strategy="IDENTITY")
      * @SuppressWarnings(PHPMD.ShortVariable)
      */
-    private $id;
+    private ?int $id;
 
     /**
      * Username
-     *
-     * @var string
      *
      * @ORM\Column(
      *     name     = "username",
@@ -57,12 +54,10 @@ class Usuario implements \JsonSerializable
      *     unique   = true
      *     )
      */
-    private $username;
+    private string $username;
 
     /**
      * Email
-     *
-     * @var string
      *
      * @ORM\Column(
      *     name     = "email",
@@ -72,12 +67,10 @@ class Usuario implements \JsonSerializable
      *     unique   = true
      *     )
      */
-    private $email;
+    private string $email;
 
     /**
      * Enabled
-     *
-     * @var boolean
      *
      * @ORM\Column(
      *     name     = "enabled",
@@ -85,23 +78,19 @@ class Usuario implements \JsonSerializable
      *     nullable = false
      *     )
      */
-    private $enabled;
+    private bool $enabled;
 
     /**
-     * @var bool
-     *
      * @ORM\Column(
      *     name="master",
      *     type="boolean",
      *     options={ "default" = false }
      * )
      */
-    protected $isMaestro = false;
+    protected bool $isMaestro = false;
 
     /**
      * IsAdmin
-     *
-     * @var boolean
      *
      * @ORM\Column(
      *     name     = "admin",
@@ -110,23 +99,19 @@ class Usuario implements \JsonSerializable
      *     options  = { "default" = false }
      *     )
      */
-    private $isAdmin;
+    private bool $isAdmin;
 
     /**
-     * @var ArrayCollection $cuestiones
-     *
      * @ORM\OneToMany(
      *     targetEntity="Cuestion",
      *     mappedBy="creador",
      *     cascade={ "merge", "remove" }
      * )
      */
-    protected $cuestiones;
+    protected Collection $cuestiones;
 
     /**
      * Password
-     *
-     * @var string
      *
      * @ORM\Column(
      *     name     = "password",
@@ -135,7 +120,7 @@ class Usuario implements \JsonSerializable
      *     nullable = false
      *     )
      */
-    private $password;
+    private string $password;
 
     /**
      * User constructor.
@@ -379,7 +364,7 @@ class Usuario implements \JsonSerializable
         return [
             'usuario' => [
                 'id' => $this->getId(),
-                'username' => $this->getUsername(),
+                'username' => utf8_encode($this->getUsername()),
                 'email' => $this->getEmail(),
                 'enabled' => $this->isEnabled(),
                 'maestro' => $this->isMaestro(),

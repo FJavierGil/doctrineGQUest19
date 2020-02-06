@@ -1,13 +1,15 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\Entity\Usuario.php
  */
 
 namespace TDW\Tests\GCuest\Entity;
 
 use Faker\Factory;
+use Faker\Generator as Faker;
 use PHPUnit\Framework\TestCase;
+use TDW\GCuest\Entity\Cuestion;
 use TDW\GCuest\Entity\Usuario;
 
 /**
@@ -18,13 +20,11 @@ use TDW\GCuest\Entity\Usuario;
  */
 class UsuarioTest extends TestCase
 {
-    /**
-     * @var Usuario $user
-     */
-    protected static $user;
+    protected static Usuario $user;
 
-    /** @var \Faker\Generator $faker */
-    private static $faker;
+    private static Faker $faker;
+
+    private static Cuestion $cuestion;
 
     /**
      * Sets up the fixture.
@@ -34,6 +34,7 @@ class UsuarioTest extends TestCase
     {
         self::$user  = new Usuario();
         self::$faker = Factory::create('es_ES');
+        self::$cuestion = new Cuestion();
     }
 
     /**
@@ -151,6 +152,8 @@ class UsuarioTest extends TestCase
     {
         $username = self::$faker->userName;
         self::$user->setUsername($username);
+        self::$user->setMaestro(true);
+        self::$cuestion->setCreador(self::$user);
         self::assertStringContainsString($username, self::$user->__toString());
     }
 
@@ -159,7 +162,9 @@ class UsuarioTest extends TestCase
      */
     public function testJsonSerialize(): void
     {
-        $json = json_encode(self::$user);
+        self::$user->setMaestro(true);
+        self::$cuestion->setCreador(self::$user);
+        $json = json_encode(self::$user, JSON_THROW_ON_ERROR);
         self::assertJson((string) $json);
     }
 }

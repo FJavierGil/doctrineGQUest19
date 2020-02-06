@@ -1,9 +1,8 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * ./cli-config.php
  *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
  */

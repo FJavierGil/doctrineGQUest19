@@ -1,9 +1,8 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\scripts\listadoCuestiones.php
  *
- * @author   Javier Gil <franciscojavier.gil@upm.es>
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
  */
@@ -16,13 +15,16 @@ try {
     $entityManager = \TDW\GCuest\Utils::getEntityManager();
     $cuestiones = $entityManager->getRepository(Cuestion::class)->findAll();
     $entityManager->close();
-} catch (\Exception $e) {
+} catch (Throwable $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }
 
 // Salida formato JSON
 if (in_array('--json', $argv, false)) {
-    echo json_encode([ 'cuestiones' => $cuestiones], JSON_PRETTY_PRINT);
+    echo json_encode(
+        [ 'cuestiones' => $cuestiones ],
+        JSON_PRETTY_PRINT | JSON_THROW_ON_ERROR
+    );
     exit();
 }
 

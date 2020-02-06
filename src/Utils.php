@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\Utils.php
  */
 
@@ -8,7 +8,6 @@ namespace TDW\GCuest;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\SchemaTool;
 use Doctrine\ORM\Tools\Setup;
 use TDW\GCuest\Entity\Usuario;
@@ -29,12 +28,12 @@ trait Utils
             $_ENV['DATABASE_HOST'], $_ENV['DATABASE_PORT'], $_ENV['DATABASE_NAME'],
             $_ENV['DATABASE_USER'], $_ENV['DATABASE_PASSWD'], $_ENV['ENTITY_DIR']
         )) {
-            fwrite(STDERR, 'Faltan por definir variables de entorno');
+            fwrite(STDERR, 'Faltan variables de entorno por definir');
             exit(1);
         }
 
         // Cargar configuración de la conexión
-        $dbParams = array(
+        $dbParams = [
             'host'      => $_ENV['DATABASE_HOST'],
             'port'      => $_ENV['DATABASE_PORT'],
             'dbname'    => $_ENV['DATABASE_NAME'],
@@ -42,7 +41,7 @@ trait Utils
             'password'  => $_ENV['DATABASE_PASSWD'],
             'driver'    => $_ENV['DATABASE_DRIVER'],
             'charset'   => $_ENV['DATABASE_CHARSET']
-        );
+        ];
 
         $config = Setup::createAnnotationMetadataConfiguration(
             [ $_ENV['ENTITY_DIR'] ],       // paths to mapped entities
@@ -60,7 +59,7 @@ trait Utils
         $eManager = null;
         try {
             $eManager = EntityManager::create($dbParams, $config);
-        } catch (ORMException $e) {
+        } catch (\Throwable $e) {
             fwrite(STDERR, 'ERROR: ' . $e->getMessage() . PHP_EOL);
             exit(1);
         }
@@ -80,13 +79,13 @@ trait Utils
         require_once $dir . '/vendor/autoload.php';
 
         if (!class_exists(\Dotenv\Dotenv::class)) {
-            fwrite(STDERR, 'ERROR: No se ha cargado Dotenv'. PHP_EOL);
+            fwrite(STDERR, 'ERROR: No se ha cargado DotENV'. PHP_EOL);
             exit(1);
         }
 
         // Load environment variables from .env file
         if (file_exists($dir . '/.env')) {
-            $dotenv = \Dotenv\Dotenv::create($dir, '.env');
+            $dotenv = \Dotenv\Dotenv::createMutable($dir, '.env');
             $dotenv->load();
         } else {
             fwrite(STDERR, 'ERROR: no existe el fichero .env'. PHP_EOL);
@@ -94,12 +93,12 @@ trait Utils
         }
 
         // Overload with .env.docker or .env.local
-        if (filter_has_var(INPUT_ENV, 'DOCKER')) {
-            $dotenv = \Dotenv\Dotenv::create($dir, '.env.docker');
-            $dotenv->overload();
+        if (filter_has_var(INPUT_ENV, 'docker')) {
+            $dotenv = \Dotenv\Dotenv::createMutable($dir, '.env.docker');
+            $dotenv->load();
         } elseif (file_exists($dir . '/.env.local')) {
-            $dotenv = \Dotenv\Dotenv::create($dir, '.env.local');
-            $dotenv->overload();
+            $dotenv = \Dotenv\Dotenv::createMutable($dir, '.env.local');
+            $dotenv->load();
         }
     }
 
@@ -131,8 +130,11 @@ trait Utils
             $e_manager = self::getEntityManager();
             $e_manager->persist($user);
             $e_manager->flush();
-        } catch (\Exception $e) {
-            fwrite(STDERR, 'EXCEPCIÓN: ' . $e->getCode() . ' - ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            fwrite(
+                STDERR,
+                'EXCEPCIÓN: ' . $e->getCode() . ' - ' . $e->getMessage()
+            );
             exit(1);
         }
     }
@@ -150,8 +152,11 @@ trait Utils
             $sch_tool = new SchemaTool($e_manager);
             $sch_tool->dropDatabase();
             $sch_tool->updateSchema($metadata, true);
-        } catch (\Exception $e) {
-            fwrite(STDERR, 'EXCEPCIÓN: ' . $e->getCode() . ' - ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            fwrite(
+                STDERR,
+                'EXCEPCIÓN: ' . $e->getCode() . ' - ' . $e->getMessage()
+            );
             exit(1);
         }
     }

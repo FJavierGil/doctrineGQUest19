@@ -2,7 +2,7 @@ TDW: Doctrine Gestión Cuestionarios
 ======================================
 
 [![MIT license](http://img.shields.io/badge/license-MIT-brightgreen.svg)](http://opensource.org/licenses/MIT)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%5E7.2-blue.svg)](http://php.net/)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%5E7.4-blue.svg)](http://php.net/)
 
 > Ejemplo ORM Doctrine
 
@@ -29,7 +29,7 @@ $ bin\doctrine orm:schema:update --dump-sql --force
 
 Para comprobar la validez de la información de mapeo y la sincronización con la base de datos:
 ```
-$ bin\doctrine orm:schema:validate
+$ bin\doctrine orm:validate
 ```
 
 ##Estructura del proyecto:

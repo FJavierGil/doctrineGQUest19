@@ -1,11 +1,12 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\scripts\nuevaCuestion.php
  */
 
 use TDW\GCuest\Entity\Cuestion;
 use TDW\GCuest\Entity\Usuario;
+use TDW\GCuest\Utils;
 
 require 'inicio.php';
 
@@ -20,7 +21,7 @@ ______MOSTRAR_USO;
 
 try {
     $maestro = null;
-    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    $entityManager = Utils::getEntityManager();
     if (isset($argv[2])) {
         /** @var Usuario $maestro */
         $maestro = $entityManager
@@ -35,6 +36,6 @@ try {
     $entityManager->persist($cuestion);
     $entityManager->flush();
     echo 'Creada cuestión Id: ' . $cuestion->getIdCuestion() . PHP_EOL;
-} catch (\Exception $e) {
+} catch (Throwable $e) {
     exit('ERROR (' . $e->getCode() . '): ' . $e->getMessage());
 }

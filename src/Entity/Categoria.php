@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * src\Entity\Categoria.php
  */
 
@@ -21,8 +21,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Categoria
 {
     /**
-     * @var int $idCategoria
-     *
      * @ORM\Id()
      * @ORM\GeneratedValue( strategy="AUTO" )
      * @ORM\Column(
@@ -30,11 +28,9 @@ class Categoria
      *     type="integer"
      * )
      */
-    protected $idCategoria;
+    protected ?int $idCategoria = null;
 
     /**
-     * @var string $propuestaDescripcion
-     *
      * @ORM\Column(
      *     name="prop_descripcion",
      *     type="string",
@@ -42,22 +38,18 @@ class Categoria
      *     nullable=true
      * )
      */
-    protected $propuestaDescripcion;
+    protected string $propuestaDescripcion;
 
     /**
-     * @var bool $correcta
-     *
      * @ORM\Column(
      *     name="enum_disponible",
      *     type="boolean",
      *     options={ "default" = false }
      * )
      */
-    protected $correcta;
+    protected bool $correcta;
 
     /**
-     * @var Collection|Cuestion[]
-     *
      * @ORM\ManyToMany(targetEntity="Cuestion", inversedBy="categorias")
      * @ORM\JoinTable(
      *   name="cuestion_has_categoria",
@@ -69,7 +61,7 @@ class Categoria
      *   }
      * )
      */
-    protected $cuestiones;
+    protected Collection $cuestiones;
 
     /**
      * Categoria constructor.
@@ -84,9 +76,9 @@ class Categoria
     }
 
     /**
-     * @return int
+     * @return null|int
      */
-    public function getIdCategoria(): int
+    public function getIdCategoria(): ?int
     {
         return $this->idCategoria;
     }
@@ -220,7 +212,7 @@ class Categoria
         return [
             'cuestion' => [
                 'id' => $this->getIdCategoria(),
-                'prop_descripcion' => $this->getPropuestaDescripcion(),
+                'prop_descripcion' => utf8_encode($this->getPropuestaDescripcion()),
                 'categorias' => $cod_cuestiones->toArray(),
             ]
         ];

@@ -1,16 +1,19 @@
 <?php
 /**
- * PHP version 7.2
+ * PHP version 7.4
  * tests\Entity\CuestionTest.php
  */
 
 namespace TDW\Tests\GCuest\Entity;
 
+use Doctrine\ORM\ORMException;
 use Faker\Factory;
+use Faker\Generator as Faker;
 use PHPUnit\Framework\TestCase;
 use TDW\GCuest\Entity\Categoria;
 use TDW\GCuest\Entity\Cuestion;
 use TDW\GCuest\Entity\Usuario;
+use Throwable;
 
 /**
  * Class CuestionTest
@@ -20,18 +23,13 @@ use TDW\GCuest\Entity\Usuario;
  */
 class CuestionTest extends TestCase
 {
-    /**
-     * @var Usuario $user
-     */
-    protected static $user;
+    protected static Usuario $user;
 
-    /**
-     * @var Cuestion $cuestion
-     */
-    protected static $cuestion;
+    protected static Cuestion $cuestion;
 
-    /** @var \Faker\Generator $faker */
-    private static $faker;
+    protected static Categoria $categoria;
+
+    private static Faker $faker;
 
     /**
      * Sets up the fixture.
@@ -49,8 +47,12 @@ class CuestionTest extends TestCase
                 true
             );
             self::$cuestion = new Cuestion();
-        } catch (\Exception $e) {
-            sprintf('EXCEPCIÓN(%d): %s', $e->getCode(), $e->getMessage());
+            self::$categoria = new Categoria(self::$faker->word);
+        } catch (Throwable $e) {
+            fwrite(
+                STDERR,
+                sprintf('EXCEPCIÓN(%d): %s', $e->getCode(), $e->getMessage())
+            );
         }
     }
 
@@ -59,7 +61,7 @@ class CuestionTest extends TestCase
      * @covers ::getIdCuestion
      *
      * @return void
-     * @throws \Doctrine\ORM\ORMException
+     * @throws ORMException
      */
     public function testConstructor(): void
     {
@@ -92,7 +94,7 @@ class CuestionTest extends TestCase
      *
      * @covers ::abrirCuestion()
      * @covers ::cerrarCuestion()
-     * @covers ::getEstado
+     * @covers ::getEstado()
      */
     public function testAbrirCerrarCuestion(): void
     {
@@ -105,8 +107,8 @@ class CuestionTest extends TestCase
     /**
      * Implements testSetEnunciadoDisponible
      *
-     * @covers ::setEnunciadoDisponible
-     * @covers ::isEnunciadoDisponible
+     * @covers ::setEnunciadoDisponible()
+     * @covers ::isEnunciadoDisponible()
      */
     public function testIsSetEnunciadoDisponible(): void
     {
@@ -119,7 +121,9 @@ class CuestionTest extends TestCase
     /**
      * Implements testGetSetCreador
      *
-     * @throws \Doctrine\ORM\ORMException
+     * @covers ::getCreador
+     * @covers ::setCreador
+     * @throws ORMException
      */
     public function testGetSetCreador(): void
     {
@@ -127,6 +131,22 @@ class CuestionTest extends TestCase
         self::$cuestion->setCreador(self::$user);
         self::assertSame(self::$user, self::$cuestion->getCreador());
     }
+
+    /**
+     * Implements testSetCreadorException
+     *
+     * @covers ::setCreador
+     * @depends testGetSetCreador
+     */
+    public function testSetCreadorException(): void
+    {
+        self::$user->setMaestro(false);
+        $this->expectException(ORMException::class);
+        self::$cuestion->setCreador(self::$user);
+        self::$user->setMaestro(true);
+    }
+
+
 
     /**
      * Implements testGetAddContainsRemoveCategoria
@@ -142,6 +162,7 @@ class CuestionTest extends TestCase
         $propuesta = self::$faker->slug;
         $categoria = new Categoria($propuesta);
         self::$cuestion->addCategoria($categoria);
+        self::$cuestion->addCategoria($categoria);
         self::assertNotEmpty(self::$cuestion->getCategorias());
         self::assertTrue(self::$cuestion->containsCategoria($categoria));
         self::$cuestion->removeCategoria($categoria);
@@ -151,9 +172,10 @@ class CuestionTest extends TestCase
     }
 
     /**
-     * Implements test__toString
+     * Implements testToString
+     * @covers ::__toString()
      */
-    public function test__toString(): void
+    public function testToString(): void
     {
         $descripcion = self::$faker->slug;
         self::$cuestion->setEnunciadoDescripcion($descripcion);
@@ -162,10 +184,13 @@ class CuestionTest extends TestCase
 
     /**
      * Implements testJsonSerialize
+     *
+     * @covers ::jsonSerialize()
      */
     public function testJsonSerialize(): void
     {
-        $json = json_encode(self::$cuestion);
+        self::$cuestion->addCategoria(self::$categoria);
+        $json = json_encode(self::$cuestion->jsonSerialize(), JSON_THROW_ON_ERROR);
         self::assertJson((string) $json);
     }
 }

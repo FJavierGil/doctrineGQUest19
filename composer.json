@@ -3,7 +3,16 @@
     "type": "project",
     "description": "UPM - TDW - Doctrine Gestión Cuestionarios",
     "license": "MIT",
-    "homepage": "http://miw.etsisi.upm.es/",
+    "homepage": "http://www.etsisi.upm.es/",
+    "keywords": ["symfony", "doctrine", "rest", "psr7"],
+    "authors": [
+        {
+            "name": "TDW UPM",
+            "homepage": "http://www.etsisi.upm.es/",
+            "email": "miw.etsisi@upm.es",
+            "role": "Developer"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "TDW\\GCuest\\": "src/"
@@ -15,16 +24,16 @@
         }
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=7.4",
         "ext-json": "*",
         "ext-mysqli": "*",
         "ext-pdo": "*",
-        "doctrine/orm": "^2.6",
-        "vlucas/phpdotenv": "^3.3"
+        "doctrine/orm": "^2.7",
+        "vlucas/phpdotenv": "^4.1"
     },
     "require-dev": {
-        "fzaninotto/faker": "^1.8",
-        "phpunit/phpunit": "^8.0",
+        "fzaninotto/faker": "^1.9",
+        "phpunit/phpunit": "^8.5",
         "roave/security-advisories": "dev-master"
     },
     "config": {
