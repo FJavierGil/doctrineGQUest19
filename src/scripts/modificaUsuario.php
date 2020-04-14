@@ -1,13 +1,14 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\scripts\modificaUsuario.php
+ * src/scripts/modificaUsuario.php
  */
 
-use TDW\GCuest\Entity\Usuario;
-use TDW\GCuest\Utils;
+require __DIR__ . '/inicio.php';
 
-require 'inicio.php';
+use TDW\GCuest\Entity\Usuario;
+use TDW\GCuest\Utility\Utils;
 
 if ($argc < 3) {
     $texto = <<< ______MOSTRAR_USO
@@ -25,7 +26,7 @@ try {
     $usuario = $entityManager
         ->find(Usuario::class, $nombre);
     if (null === $usuario) {
-        die('Usuario [' . $nombre . '] no existe.' .PHP_EOL);
+        die('Usuario [' . $nombre . '] no existe.' . PHP_EOL);
     }
 
     // Modificaciones
@@ -42,7 +43,7 @@ try {
                 $usuario->setMaestro((bool) $valor);
                 break;
             default:
-                echo sprintf('Argumento %s desconocido', $clave);
+                echo sprintf('Argumento %s desconocido' . PHP_EOL, $clave);
         }
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PHP version 7.4
  * ./cli-config.php
@@ -8,10 +9,10 @@
  */
 
 use Doctrine\ORM\Tools\Console\ConsoleRunner;
-use TDW\GCuest\Utils;
+use TDW\GCuest\Utility\Utils;
 
 // Load env variables from .env + (.docker ||.local )
-Utils::loadEnv(__DIR__);
+Utils::loadEnv(dirname(__DIR__));
 
 $entityManager = Utils::getEntityManager();
 

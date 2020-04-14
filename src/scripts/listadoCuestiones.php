@@ -1,18 +1,20 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\scripts\listadoCuestiones.php
+ * src/scripts/listadoCuestiones.php
  *
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
  */
 
 use TDW\GCuest\Entity\Cuestion;
+use TDW\GCuest\Utility\Utils;
 
 require 'inicio.php';
 
 try {
-    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    $entityManager = Utils::getEntityManager();
     $cuestiones = $entityManager->getRepository(Cuestion::class)->findAll();
     $entityManager->close();
 } catch (Throwable $e) {

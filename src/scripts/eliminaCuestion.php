@@ -1,13 +1,14 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\scripts\eliminaCuestion.php
+ * src/scripts/eliminaCuestion.php
  */
 
-use TDW\GCuest\Entity\Cuestion;
-use TDW\GCuest\Utils;
-
 require 'inicio.php';
+
+use TDW\GCuest\Entity\Cuestion;
+use TDW\GCuest\Utility\Utils;
 
 if ($argc !== 2) {
     $texto = <<< ______MOSTRAR_USO
@@ -24,7 +25,7 @@ try {
     $cuestion = $entityManager
         ->find(Cuestion::class, $idCuestion);
     if (null === $cuestion) {
-        die('Cuestión [' . $idCuestion . '] no existe.' .PHP_EOL);
+        die('Cuestión [' . $idCuestion . '] no existe.' . PHP_EOL);
     }
     $entityManager->remove($cuestion);
     $entityManager->flush();

@@ -1,7 +1,8 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\Entity\Cuestion.php
+ * src/Entity/Cuestion.php
  */
 
 namespace TDW\GCuest\Entity;
@@ -20,7 +21,8 @@ use JsonSerializable;
  *     name="cuestiones",
  *     indexes={
  *          @ORM\Index(
- *              name="fk_creador_idx", columns={ "creador" }
+ *              name="fk_creador_idx",
+ *              columns={ "creador" }
  *          )
  *      }
  * )
@@ -32,7 +34,7 @@ class Cuestion implements JsonSerializable
 
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue( strategy="AUTO" )
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(
      *     name="idCuestion",
      *     type="integer"
@@ -60,9 +62,18 @@ class Cuestion implements JsonSerializable
     protected bool $enunciadoDisponible;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Usuario", inversedBy="cuestiones", cascade={ "merge", "remove" })
+     * @ORM\ManyToOne(
+     *     targetEntity="Usuario",
+     *     inversedBy="cuestiones",
+     *     cascade={ "merge", "remove" }
+     *     )
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="creador", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     *   @ORM\JoinColumn(
+     *     name="creador",
+     *     referencedColumnName="id",
+     *     nullable=true,
+     *     onDelete="CASCADE"
+     *   )
      * })
      */
     protected ?Usuario $creador = null;
@@ -78,7 +89,10 @@ class Cuestion implements JsonSerializable
     protected string $estado = Cuestion::CUESTION_CERRADA;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Categoria", mappedBy="cuestiones")
+     * @ORM\ManyToMany(
+     *     targetEntity="Categoria",
+     *     mappedBy="cuestiones"
+     * )
      * @ORM\OrderBy({ "idCategoria" = "ASC" })
      */
     protected Collection $categorias;
@@ -259,9 +273,7 @@ class Cuestion implements JsonSerializable
         $cod_categorias = $this->getCategorias()->isEmpty()
             ? new ArrayCollection()
             : $this->getCategorias()->map(
-                function (Categoria $categoria) {
-                    return $categoria->getIdCategoria();
-                }
+                fn (Categoria $categoria) => $categoria->getIdCategoria()
             );
         $txt_categorias = $cod_categorias->isEmpty()
             ? '[ ]'
@@ -288,9 +300,7 @@ class Cuestion implements JsonSerializable
         $cod_categorias = $this->getCategorias()->isEmpty()
             ? new ArrayCollection()
             : $this->getCategorias()->map(
-                function (Categoria $plan) {
-                    return $plan->getIdCategoria();
-                }
+                fn (Categoria $plan) => $plan->getIdCategoria()
             );
         return [
             'cuestion' => [

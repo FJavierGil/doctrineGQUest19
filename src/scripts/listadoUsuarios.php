@@ -1,15 +1,17 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\scripts\listadoUsuarios.php
+ * src/scripts/listadoUsuarios.php
  */
 
-use TDW\GCuest\Entity\Usuario;
+require __DIR__ . '/inicio.php';
 
-require 'inicio.php';
+use TDW\GCuest\Entity\Usuario;
+use TDW\GCuest\Utility\Utils;
 
 try {
-    $entityManager = \TDW\GCuest\Utils::getEntityManager();
+    $entityManager = Utils::getEntityManager();
     $usuarios = $entityManager->getRepository(Usuario::class)->findAll();
     $entityManager->close();
 } catch (Throwable $e) {

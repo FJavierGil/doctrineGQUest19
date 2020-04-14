@@ -1,16 +1,14 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\scripts\create_user_admin.php
+ * src/scripts/create_user_admin.php
  */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/inicio.php';
 
 use TDW\GCuest\Entity\Usuario;
-use TDW\GCuest\Utils;
-
-// Carga las variables de entorno
-Utils::loadEnv(__DIR__ . '/../..');
+use TDW\GCuest\Utility\Utils;
 
 // Crear usuario
 $user = new Usuario();
@@ -29,6 +27,6 @@ try {
         STDOUT,
         sprintf('Creado usuario Id: %d' . PHP_EOL, $user->getId())
     );
-} catch (\Throwable $e) {
+} catch (Throwable $e) {
     die('ERROR: ' . $e->getMessage());
 }

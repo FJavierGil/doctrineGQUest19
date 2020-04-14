@@ -1,14 +1,15 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\scripts\nuevaCuestion.php
+ * src/scripts/nuevaCuestion.php
  */
+
+require __DIR__ . '/inicio.php';
 
 use TDW\GCuest\Entity\Cuestion;
 use TDW\GCuest\Entity\Usuario;
-use TDW\GCuest\Utils;
-
-require 'inicio.php';
+use TDW\GCuest\Utility\Utils;
 
 if ($argc < 2) {
     $texto = <<< ______MOSTRAR_USO

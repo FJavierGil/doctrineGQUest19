@@ -1,7 +1,8 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\Entity\Categoria.php
+ * src/Entity/Categoria.php
  */
 
 namespace TDW\GCuest\Entity;
@@ -22,7 +23,7 @@ class Categoria
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue( strategy="AUTO" )
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(
      *     name="idCategoria",
      *     type="integer"
@@ -32,17 +33,17 @@ class Categoria
 
     /**
      * @ORM\Column(
-     *     name="prop_descripcion",
+     *     name="cat_descripcion",
      *     type="string",
      *     length=255,
      *     nullable=true
      * )
      */
-    protected string $propuestaDescripcion;
+    protected string $categoriaDescripcion;
 
     /**
      * @ORM\Column(
-     *     name="enum_disponible",
+     *     name="cat_correcta",
      *     type="boolean",
      *     options={ "default" = false }
      * )
@@ -50,14 +51,23 @@ class Categoria
     protected bool $correcta;
 
     /**
-     * @ORM\ManyToMany(targetEntity="Cuestion", inversedBy="categorias")
+     * @ORM\ManyToMany(
+     *     targetEntity="Cuestion",
+     *     inversedBy="categorias"
+     * )
      * @ORM\JoinTable(
      *   name="cuestion_has_categoria",
      *   joinColumns={
-     *     @ORM\JoinColumn(name="categoria_id", referencedColumnName="idCategoria")
+     *     @ORM\JoinColumn(
+     *          name="categoria_id",
+     *          referencedColumnName="idCategoria"
+     *     )
      *   },
      *   inverseJoinColumns={
-     *     @ORM\JoinColumn(name="cuestion_id", referencedColumnName="idCuestion")
+     *     @ORM\JoinColumn(
+     *          name="cuestion_id",
+     *          referencedColumnName="idCuestion"
+     *     )
      *   }
      * )
      */
@@ -70,7 +80,7 @@ class Categoria
      */
     public function __construct(string $propuestaDescripcion = '', bool $correcta = true)
     {
-        $this->propuestaDescripcion = $propuestaDescripcion;
+        $this->categoriaDescripcion = $propuestaDescripcion;
         $this->correcta = $correcta;
         $this->cuestiones = new ArrayCollection();
     }
@@ -86,18 +96,18 @@ class Categoria
     /**
      * @return string|null
      */
-    public function getPropuestaDescripcion(): ?string
+    public function getCategoriaDescripcion(): ?string
     {
-        return $this->propuestaDescripcion;
+        return $this->categoriaDescripcion;
     }
 
     /**
-     * @param string $propuestaDescripcion
+     * @param string $categoriaDescripcion
      * @return Categoria
      */
-    public function setPropuestaDescripcion(string $propuestaDescripcion): Categoria
+    public function setCategoriaDescripcion(string $categoriaDescripcion): Categoria
     {
-        $this->propuestaDescripcion = $propuestaDescripcion;
+        $this->categoriaDescripcion = $categoriaDescripcion;
         return $this;
     }
 
@@ -179,16 +189,14 @@ class Categoria
         $cod_cuestiones = $this->getCuestiones()->isEmpty()
             ? new ArrayCollection()
             : $this->getCuestiones()->map(
-                function (Cuestion $cuestion) {
-                    return $cuestion->getIdCuestion();
-                }
+                fn (Cuestion $cuestion) => $cuestion->getIdCuestion()
             );
         $txt_cuestiones = $cod_cuestiones->isEmpty()
             ? '[ ]'
             : '[' . implode(', ', $cod_cuestiones->getValues()) . ']';
         return '[ cuestion ' .
             '(id=' . $this->getIdCategoria() . ', ' .
-            'prop_descripción="' . $this->getPropuestaDescripcion() . '", ' .
+            'prop_descripción="' . $this->getCategoriaDescripcion() . '", ' .
             'cuestiones="' . $txt_cuestiones . '""' .
             ') ]';
     }
@@ -205,14 +213,12 @@ class Categoria
         $cod_cuestiones = $this->getCuestiones()->isEmpty()
             ? new ArrayCollection()
             : $this->getCuestiones()->map(
-                function (Cuestion $cuestion) {
-                    return $cuestion->getIdCuestion();
-                }
+                fn (Cuestion $cuestion) => $cuestion->getIdCuestion()
             );
         return [
             'cuestion' => [
                 'id' => $this->getIdCategoria(),
-                'prop_descripcion' => utf8_encode($this->getPropuestaDescripcion()),
+                'prop_descripcion' => utf8_encode($this->getCategoriaDescripcion()),
                 'categorias' => $cod_cuestiones->toArray(),
             ]
         ];

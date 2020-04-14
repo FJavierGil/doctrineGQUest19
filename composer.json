@@ -4,7 +4,7 @@
     "description": "UPM - TDW - Doctrine Gestión Cuestionarios",
     "license": "MIT",
     "homepage": "http://www.etsisi.upm.es/",
-    "keywords": ["symfony", "doctrine", "rest", "psr7"],
+    "keywords": ["symfony", "doctrine"],
     "authors": [
         {
             "name": "TDW UPM",
@@ -33,7 +33,7 @@
     },
     "require-dev": {
         "fzaninotto/faker": "^1.9",
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^9.1",
         "roave/security-advisories": "dev-master"
     },
     "config": {

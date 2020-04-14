@@ -1,13 +1,14 @@
 <?php
+
 /**
  * PHP version 7.4
  * src\scripts\nuevoUsuario.php
  */
 
-use TDW\GCuest\Entity\Usuario;
-use TDW\GCuest\Utils;
+require __DIR__ . '/inicio.php';
 
-require 'inicio.php';
+use TDW\GCuest\Entity\Usuario;
+use TDW\GCuest\Utility\Utils;
 
 try {
     $nombre = 'user-' . random_int(0, 100000);

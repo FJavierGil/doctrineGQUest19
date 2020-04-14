@@ -22,14 +22,14 @@ a `./.env.local`. A continuación se debe editar dicho fichero para asignar los 
 * Configuración del acceso a la base de datos (usuario y contraseña)
 
 Una vez editado el anterior fichero desde el directorio raíz del proyecto se deben ejecutar los comandos:
-```
-$ composer install
-$ bin\doctrine orm:schema:update --dump-sql --force
+```bash
+> composer install
+> bin\doctrine orm:schema:update --dump-sql --force
 ```
 
 Para comprobar la validez de la información de mapeo y la sincronización con la base de datos:
-```
-$ bin\doctrine orm:validate
+```bash
+> bin\doctrine orm:validate
 ```
 
 ##Estructura del proyecto:
@@ -37,12 +37,13 @@ $ bin\doctrine orm:validate
 A continuación se describe el contenido y estructura del proyecto:
 
 * Directorio raíz del proyecto `.`:
-    - `cli-config.php`: infraestructura de la interfaz de comandos del ORM Doctrine
+    - `config/cli-config.php`: infraestructura de la interfaz de comandos del ORM Doctrine
     - `phpunit.xml` configuración de la suite de pruebas
 * Directorio `bin`:
     - Ejecutables (*doctrine* y *phpunit*)
 * Directorio `src`:
     - Subdirectorio `src/Entity`: entidades PHP (incluyen anotaciones de mapeo del ORM)
+    - Subdirectorio `src/Utils`: trait con utilidades
     - Subdirectorio `src/scripts`: algunos scripts de ejemplo
 * Directorio `vendor`:
     - Componentes desarrollados por terceros (Doctrine, Dotenv, etc.)
@@ -59,8 +60,8 @@ sin la necesidad de herramientas adicionales.
 Para configurar el entorno de pruebas se debe crear una copia del fichero `./phpunit.xml.dist`
 y renombrarla como `./phpunit.xml`. A continuación se debe editar dicho fichero y modificar los
 mismos parámetros que en la fase de instalación con los valores apropiados. Para lanzar la suite de pruebas se debe ejecutar:
-```
-$ ./bin/phpunit [--testdox] [--coverage-text] [-v]
+```bash
+> ./bin/phpunit [--testdox] [--coverage-text] [-v]
 ```
 
 [dataMapper]: http://martinfowler.com/eaaCatalog/dataMapper.html

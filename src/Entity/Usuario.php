@@ -1,7 +1,8 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\Entity\Usuario.php
+ * src/Entity/Usuario.php
  */
 
 namespace TDW\GCuest\Entity;
@@ -30,8 +31,6 @@ use JsonSerializable;
 class Usuario implements JsonSerializable
 {
     /**
-     * Id
-     *
      * @ORM\Column(
      *     name     = "id",
      *     type     = "integer",
@@ -44,8 +43,6 @@ class Usuario implements JsonSerializable
     private ?int $id;
 
     /**
-     * Username
-     *
      * @ORM\Column(
      *     name     = "username",
      *     type     = "string",
@@ -57,8 +54,6 @@ class Usuario implements JsonSerializable
     private string $username;
 
     /**
-     * Email
-     *
      * @ORM\Column(
      *     name     = "email",
      *     type     = "string",
@@ -70,8 +65,6 @@ class Usuario implements JsonSerializable
     private string $email;
 
     /**
-     * Enabled
-     *
      * @ORM\Column(
      *     name     = "enabled",
      *     type     = "boolean",
@@ -90,8 +83,6 @@ class Usuario implements JsonSerializable
     protected bool $isMaestro = false;
 
     /**
-     * IsAdmin
-     *
      * @ORM\Column(
      *     name     = "admin",
      *     type     = "boolean",
@@ -111,8 +102,6 @@ class Usuario implements JsonSerializable
     protected Collection $cuestiones;
 
     /**
-     * Password
-     *
      * @ORM\Column(
      *     name     = "password",
      *     type     = "string",
@@ -325,9 +314,7 @@ class Usuario implements JsonSerializable
         $id_cuestiones = $this->getCuestiones()->isEmpty()
             ? new ArrayCollection()
             : $this->getCuestiones()->map(
-                function (Cuestion $cuestion) {
-                    return $cuestion->getIdCuestion();
-                }
+                fn (Cuestion $cuestion) => $cuestion->getIdCuestion()
             );
 
         $txt_cuestiones = $id_cuestiones->isEmpty()
@@ -356,9 +343,7 @@ class Usuario implements JsonSerializable
         $id_cuestiones = $this->getCuestiones()->isEmpty()
             ? new ArrayCollection()
             : $this->getCuestiones()->map(
-                function (Cuestion $cuestion) {
-                    return $cuestion->getIdCuestion();
-                }
+                fn (Cuestion $cuestion) => $cuestion->getIdCuestion()
             );
 
         return [
