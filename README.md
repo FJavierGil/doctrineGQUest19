@@ -12,7 +12,7 @@ persistencia transparente para objetos PHP. Utiliza el patrón [Data Mapper][dat
 con el objetivo de obtener un desacoplamiento completo entre la lógica de negocio y la
 persistencia de los datos en un SGBD.
 
-## Instalación de la aplicación
+### Instalación de la aplicación
 
 Para realizar la instalación de la aplicación se debe crear una copia del fichero `./.env` y renombrarla
 a `./.env.local`. A continuación se debe editar dicho fichero para asignar los parámetros:
@@ -50,7 +50,7 @@ A continuación se describe el contenido y estructura del proyecto:
 * Directorio `tests`:
     - Conjunto de scripts para la ejecución de test con PHPUnit.
 
-## Ejecución de pruebas
+### Ejecución de pruebas
 
 La aplicación incorpora un conjunto de herramientas para la ejecución de pruebas 
 unitarias con [PHPUnit][phpunit]. Empleando este conjunto de herramientas es posible

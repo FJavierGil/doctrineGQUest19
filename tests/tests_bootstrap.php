@@ -10,4 +10,4 @@ require_once __DIR__ . '/../vendor/autoload.php';
 mt_srand();
 
 // Create/update tables in the test database
-TDW\GCuest\Utility\Utils::updateSchema();
+// TDW\GCuest\Utility\Utils::updateSchema();

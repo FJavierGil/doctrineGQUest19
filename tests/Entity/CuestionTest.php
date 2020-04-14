@@ -2,7 +2,7 @@
 
 /**
  * PHP version 7.4
- * tests\Entity\CuestionTest.php
+ * tests/Entity/CuestionTest.php
  */
 
 namespace TDW\Tests\GCuest\Entity;

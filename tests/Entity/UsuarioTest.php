@@ -1,7 +1,8 @@
 <?php
+
 /**
  * PHP version 7.4
- * src\Entity\Usuario.php
+ * tests/Entity/UsuarioTest.php
  */
 
 namespace TDW\Tests\GCuest\Entity;

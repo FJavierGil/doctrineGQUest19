@@ -2,7 +2,7 @@
 
 /**
  * PHP version 7.4
- * ./cli-config.php
+ * config/cli-config.php
  *
  * @license  https://opensource.org/licenses/MIT MIT License
  * @link     http://www.etsisi.upm.es ETS de Ingeniería de Sistemas Informáticos
