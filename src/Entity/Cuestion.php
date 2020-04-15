@@ -126,7 +126,7 @@ class Cuestion implements JsonSerializable
      */
     public function getIdCuestion(): int
     {
-        return $this->idCuestion;
+        return (int) $this->idCuestion;
     }
 
     /**

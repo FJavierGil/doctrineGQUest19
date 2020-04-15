@@ -86,11 +86,11 @@ class Categoria
     }
 
     /**
-     * @return null|int
+     * @return int
      */
-    public function getIdCategoria(): ?int
+    public function getIdCategoria(): int
     {
-        return $this->idCategoria;
+        return (int) $this->idCategoria;
     }
 
     /**
